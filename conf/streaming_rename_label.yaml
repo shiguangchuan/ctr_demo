@@ -1,0 +1,9 @@
+streaming_cli_args :
+    file : ./script/streaming_rename_label.py
+    mapper : ./streaming_rename_label.py 23
+    reducer : None
+    defines :
+        mapreduce.reduce.tasks : 0
+        mapred.job.name : rename_label
+    outputformat : org.apache.hadoop.mapred.NoSepTextOutputFormat
+

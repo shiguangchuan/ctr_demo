@@ -1,0 +1,9 @@
+streaming_cli_args :
+    file : ./script/streaming_time_norm.py
+    mapper : ./streaming_time_norm.py 1
+    reducer : None
+    defines :
+        mapreduce.reduce.tasks : 0
+        mapred.job.name : time_norm
+    outputformat : org.apache.hadoop.mapred.NoSepTextOutputFormat
+

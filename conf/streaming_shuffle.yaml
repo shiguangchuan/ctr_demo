@@ -1,0 +1,10 @@
+streaming_cli_args :
+    file : ./script/streaming_shuffle_mapper.sh
+    file : ./script/streaming_shuffle_reducer.sh
+    mapper : ./streaming_shuffle_mapper.sh
+    reducer : ./streaming_shuffle_reducer.sh
+    defines :
+        mapreduce.reduce.tasks : 20
+        mapred.job.name : shuffle
+    outputformat : org.apache.hadoop.mapred.NoSepTextOutputFormat
+
