@@ -1,5 +1,5 @@
 streaming_cli_args :
-    file : ./script/streaming_time_norm.py
+    file : /home/shiguangchuan/workspace/github/shiguangchuan/ctr_demo/script/streaming_time_norm.py
     mapper : ./streaming_time_norm.py 1
     reducer : None
     defines :

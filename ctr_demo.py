@@ -5,14 +5,14 @@
 import os
 import sys
 
-from dango import Data
-from dango import Plan
-from dango import Task
+from dango.data import Data
+from dango.plan import Plan
+from dango.task import Task
 
 
 def run_task():
     i_d = Data.query('output_data')
-    o_d = Data('output_model')
+    o_d = Data.create('output_model')
 
     model_train = Task.create('ModelTraining')
     model_train.inputs = [i_d]
@@ -32,15 +32,15 @@ def run_plan():
     input_root = './data'
 
     # import input table
-    input_app   = Data.create('ctr_demo_input_app',   'file://%s/app'%input_root,   app_schema)
-    input_site  = Data.create('ctr_demo_input_site',  'file://%s/site'%input_root,  site_schema)
-    input_label = Data.create('ctr_demo_input_label', 'file://%s/label'%input_root, label_schema)
-    input_show  = Data.create('ctr_demo_input_show',  'file://%s/show'%input_root,  show_schema)
+    input_app = Data.create('ctr_demo_input_app', uri='file://%s/app'%input_root, schema=app_schema)
+    input_site = Data.create('ctr_demo_input_site', uri='file://%s/site'%input_root, schema=site_schema)
+    input_label = Data.create('ctr_demo_input_label', uri='file://%s/label'%input_root, schema=label_schema)
+    input_show = Data.create('ctr_demo_input_show', uri='file://%s/show'%input_root, schema=show_schema)
     #input_app = Data.query('ctr_demo_input_app')
     #input_site = Data.query('ctr_demo_input_site')
     #input_label = Data.query('ctr_demo_input_label')
     #input_show = Data.query('ctr_demo_input_show')
-    #input_table3 = Data.create('data_name3', 'hdfs://master.tfp.com:8000/hdfs_path', data_schema3)
+    #input_table3 = Data.create('data_name3', uri='hdfs://master.tfp.com:8000/hdfs_path', schema=data_schema3)
 
     # define output table
     output_streaming_time_norm_label = Data.create('ctr_demo_streaming_time_norm_label')
@@ -59,33 +59,33 @@ def run_plan():
 
     # time normalize, datetime => hour
     streaming_time_norm_label = Task.create('xxxxxxxxx', name='streaming_time_norm_label')
-    streaming_time_norm_label.upstream = [xxxxxxxx(input_label)]
+    streaming_time_norm_label.upstream = [Task.create(datas=[input_label])]
     output_streaming_time_norm_label.schema = label_schema
     streaming_time_norm_label.outputs = [output_streaming_time_norm_label]
     streaming_time_norm_label.set_conf(xxxxxxxxx, "./conf/streaming_time_norm.yaml")
     task_list.append(streaming_time_norm_label)
 
     streaming_time_norm_show = Task.create('xxxxxxxxx', name='streaming_time_norm_show')
-    streaming_time_norm_show.upstream = [xxxxxxxxxxxxx(input_show)]
+    streaming_time_norm_show.upstream = [Task.create(datas=[input_show])]
     output_streaming_time_norm_show.schema = show_schema
     streaming_time_norm_show.outputs = [output_streaming_time_norm_show]
     streaming_time_norm_show.set_conf(xxxxxxxxxxxxxxxxxxx, './conf/streaming_time_norm.yaml')
     task_list.append(streaming_time_norm_show)
 
     # JOIN
-    join_show_app = Task.create('TableJoin', name='join_show_app')
-    join_show_app.upstream = [streaming_time_norm_show, xxxxxxxxxxxxx(input_app)]
+    join_show_app = Task.create('TableJoint', name='join_show_app')
+    join_show_app.upstream = [streaming_time_norm_show, Task.create(datas=[input_app])]
     join_show_app.outputs = [output_join_show_app]
     join_show_app.set_conf('xxxxxxxxxxx', './conf/join_show_app.yaml')
     task_list.append(join_show_app)
 
-    join_show_app_site = Task.create('TableJoin', name='join_show_app_site')
-    join_show_app_site.upstream = [join_show_app, xxxxxxxxxxxxx(input_site)]
+    join_show_app_site = Task.create('TableJoint', name='join_show_app_site')
+    join_show_app_site.upstream = [join_show_app, Task.create(datas=[input_site])]
     join_show_app_site.outputs = [output_join_show_app_site]
     join_show_app_site.set_conf('xxxxxxxxxxx', './conf/join_show_app_site.yaml')
     task_list.append(join_show_app_site)
 
-    join_show_app_site_label = Task.create('TableJoin', name='join_show_app_site_label')
+    join_show_app_site_label = Task.create('TableJoint', name='join_show_app_site_label')
     join_show_app_site_label.upstream = [join_show_app_site, streaming_time_norm_label]
     join_show_app_site_label.outputs = [output_join_show_app_site_label]
     join_show_app_site_label.set_conf('xxxxxxxxxxx', './conf/join_show_app_site_label.yaml')
@@ -159,7 +159,7 @@ def resume_plan(plan_id):
     plan = Plan.get_plan(plan_id)
     plan.resume()
     plan.wait()
-    plan.poll()
+    print 'Plan finished, status=%s' % plan.status
 
 if __name__ == '__main__':
     run_plan()

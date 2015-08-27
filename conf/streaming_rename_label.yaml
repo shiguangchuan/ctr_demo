@@ -1,5 +1,5 @@
 streaming_cli_args :
-    file : ./script/streaming_rename_label.py
+    file : /home/shiguangchuan/workspace/github/shiguangchuan/ctr_demo/script/streaming_rename_label.py
     mapper : ./streaming_rename_label.py 23
     reducer : None
     defines :

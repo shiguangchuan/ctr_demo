@@ -1,6 +1,6 @@
 streaming_cli_args :
-    file : ./script/streaming_shuffle_mapper.sh
-    file : ./script/streaming_shuffle_reducer.sh
+    file : /home/shiguangchuan/workspace/github/shiguangchuan/ctr_demo/script/streaming_shuffle_mapper.sh
+    file : /home/shiguangchuan/workspace/github/shiguangchuan/ctr_demo/script/streaming_shuffle_reducer.sh
     mapper : ./streaming_shuffle_mapper.sh
     reducer : ./streaming_shuffle_reducer.sh
     defines :

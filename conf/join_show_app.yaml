@@ -1,10 +1,10 @@
 baseTable:
-    name : 'input_show'
+    name : 'ctr_demo_streaming_time_norm_show'
     #meta : 'a3,a4,time' # fetch from db by name
     key  : 'app_id'
     tag  : '1'
 joinTable:
-    name : 'input_app'
+    name : 'ctr_demo_input_app'
     #meta : 'b1,b2'     # fetch from db by name
     key  : 'app_id'
     tag  : '2'

@@ -4,7 +4,7 @@ baseTable:
     key  : 'site_id'
     tag  : '1'
 joinTable:
-    name : 'input_site'
+    name : 'ctr_demo_input_site'
     #meta : 'b1,b2'     # fetch from db by name
     key  : 'site_id'
     tag  : '2'
