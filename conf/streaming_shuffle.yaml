@@ -6,4 +6,5 @@ streaming_task :
     defines :
         mapred.reduce.tasks : 20
         mapred.job.name : shuffle
+    outputformat : org.apache.hadoop.mapred.NoSepTextOutputFormat
 
