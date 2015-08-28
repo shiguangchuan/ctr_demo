@@ -11,7 +11,7 @@ if len(sys.argv) != 2:
 time_col = int(sys.argv[1])
 
 for line in sys.stdin:
-    line.strip()
+    line = line.strip()
     tokens = line.split('\t')
     sep = ''
     for i in range(0, len(tokens)):

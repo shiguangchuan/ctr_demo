@@ -13,7 +13,7 @@ comp_op = sys.argv[2].lower()
 thres_value = sys.argv[3]
 
 for line in sys.stdin:
-    line.strip()
+    line = line.strip()
     tokens = line.split('\t')
     cur_time = tokens[time_col]
     if (comp_op == 'eq' and cur_time == thres_value):

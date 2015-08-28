@@ -1,14 +1,14 @@
-baseTable:
-    name : 'ctr_demo_join_show_app_site'
+base_table:
     #meta : 'a3,a4,time' # fetch from db by name
     key  : 'show_id'
     tag  : '1'
-joinTable:
-    name : 'ctr_demo_streaming_time_norm_label'
+    pattern : ''
+join_table_0:
     #meta : 'b1,b2'     # fetch from db by name
     key  : 'show_id'
     tag  : '2'
-outTable:
+    pattern : ''
+out_table:
     #name : 'join1_output'
     meta :
         - show_id : 
