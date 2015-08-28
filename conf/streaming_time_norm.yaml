@@ -1,6 +1,6 @@
-streaming_cli_args :
+streaming_task :
     file : /home/shiguangchuan/workspace/github/shiguangchuan/ctr_demo/script/streaming_time_norm.py
-    mapper : ./streaming_time_norm.py 1
+    mapper : "./streaming_time_norm.py 1"
     reducer : None
     defines :
         mapreduce.reduce.tasks : 0

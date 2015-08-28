@@ -1,6 +1,6 @@
-streaming_cli_args :
+streaming_task :
     file : /home/shiguangchuan/workspace/github/shiguangchuan/ctr_demo/script/streaming_filter_by_time.py
-    mapper : ./streaming_filter_by_time.py 1 lt 392824
+    mapper : "./streaming_filter_by_time.py 1 lt 392824"
     reducer : None
     defines :
         mapreduce.reduce.tasks : 0

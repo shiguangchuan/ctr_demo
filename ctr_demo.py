@@ -10,17 +10,6 @@ from dango.plan import Plan
 from dango.task import Task
 
 
-def run_task():
-    i_d = Data.query('output_data')
-    o_d = Data.create('output_model')
-
-    model_train = Task.create('ModelTraining')
-    model_train.inputs = [i_d]
-    model_train.outputs = [o_d]
-
-    # configure
-    model_train.set_conf('training_bits', 10)
-    model_train.run()
 
 def run_plan():
     task_list = []
@@ -30,6 +19,7 @@ def run_plan():
     site_schema = ['site_id', 'site_category']
     
     input_root = './data'
+    conf_root = './conf'
 
     # import input table
     input_app = Data.create('ctr_demo_input_app', uri='file://%s/app'%input_root, schema=app_schema)
@@ -58,60 +48,60 @@ def run_plan():
     output_eval = Data.create('ctr_demo_output_eval')
 
     # time normalize, datetime => hour
-    streaming_time_norm_label = Task.create('xxxxxxxxx', name='streaming_time_norm_label')
+    streaming_time_norm_label = Task.create('HadoopStreaming', name='streaming_time_norm_label')
     streaming_time_norm_label.upstream = [Task.create(datas=[input_label])]
     output_streaming_time_norm_label.schema = label_schema
     streaming_time_norm_label.outputs = [output_streaming_time_norm_label]
-    streaming_time_norm_label.set_conf(xxxxxxxxx, "./conf/streaming_time_norm.yaml")
+    streaming_time_norm_label.set_conf('conf', '%s/streaming_time_norm.yaml'%conf_root)
     task_list.append(streaming_time_norm_label)
 
-    streaming_time_norm_show = Task.create('xxxxxxxxx', name='streaming_time_norm_show')
+    streaming_time_norm_show = Task.create('HadoopStreaming', name='streaming_time_norm_show')
     streaming_time_norm_show.upstream = [Task.create(datas=[input_show])]
     output_streaming_time_norm_show.schema = show_schema
     streaming_time_norm_show.outputs = [output_streaming_time_norm_show]
-    streaming_time_norm_show.set_conf(xxxxxxxxxxxxxxxxxxx, './conf/streaming_time_norm.yaml')
+    streaming_time_norm_show.set_conf('conf', '%s/streaming_time_norm.yaml'%conf_root)
     task_list.append(streaming_time_norm_show)
 
     # JOIN
     join_show_app = Task.create('TableJoint', name='join_show_app')
     join_show_app.upstream = [streaming_time_norm_show, Task.create(datas=[input_app])]
     join_show_app.outputs = [output_join_show_app]
-    join_show_app.set_conf('xxxxxxxxxxx', './conf/join_show_app.yaml')
+    join_show_app.set_conf('conf', '%s/join_show_app.yaml'%conf_root)
     task_list.append(join_show_app)
 
     join_show_app_site = Task.create('TableJoint', name='join_show_app_site')
     join_show_app_site.upstream = [join_show_app, Task.create(datas=[input_site])]
     join_show_app_site.outputs = [output_join_show_app_site]
-    join_show_app_site.set_conf('xxxxxxxxxxx', './conf/join_show_app_site.yaml')
+    join_show_app_site.set_conf('conf', '%s/join_show_app_site.yaml'%conf_root)
     task_list.append(join_show_app_site)
 
     join_show_app_site_label = Task.create('TableJoint', name='join_show_app_site_label')
     join_show_app_site_label.upstream = [join_show_app_site, streaming_time_norm_label]
     join_show_app_site_label.outputs = [output_join_show_app_site_label]
-    join_show_app_site_label.set_conf('xxxxxxxxxxx', './conf/join_show_app_site_label.yaml')
+    join_show_app_site_label.set_conf('conf', '%s/join_show_app_site_label.yaml'%conf_root)
     task_list.append(join_show_app_site_label)
 
     # rename label, >0 => 1, =0 or empty => -1
-    streaming_rename_label = Task.create('xxxxxxxxx', name='streaming_rename_label')
+    streaming_rename_label = Task.create('HadoopStreaming', name='streaming_rename_label')
     streaming_rename_label.upstream = [join_show_app_site_label]
     output_streaming_rename_label.schema = join_show_app_site_label.outputs()[0].schema()
     streaming_rename_label.outputs = [output_streaming_rename_label]
-    streaming_rename_label.set_conf(xxxxxxxxxxxxxxxxxxxx, './conf/streaming_rename_label.yaml')
+    streaming_rename_label.set_conf('conf', '%s/streaming_rename_label.yaml'%conf_root)
     task_list.append(streaming_rename_label)
 
     # split training & eval
-    streaming_split_train = Task.create('xxxxxxxxx', name='streaming_split_train')
+    streaming_split_train = Task.create('HadoopStreaming', name='streaming_split_train')
     streaming_split_train.upstream = [streaming_rename_label]
     output_streaming_split_train.schema = streaming_split_train.inputs()[0].schema()
     streaming_split_train.outputs = [output_streaming_split_train]
-    streaming_split_train.set_conf(xxxxxxxxxxxxxxxxxxxx, './conf/streaming_split_train.yaml')
+    streaming_split_train.set_conf('conf', '%s/streaming_split_train.yaml'%conf_root)
     task_list.append(streaming_split_train)
 
-    streaming_split_eval = task.create('xxxxxxxxx', name='streaming_split_eval')
+    streaming_split_eval = task.create('HadoopStreaming', name='streaming_split_eval')
     streaming_split_eval.upstream = [streaming_rename_label]
     output_streaming_split_eval.schema = streaming_split_eval.inputs()[0].schema()
     streaming_split_eval.outputs = [output_streaming_split_eval]
-    streaming_split_eval.set_conf(xxxxxxxxxxxxxxxxxxxx, './conf/streaming_split_eval.yaml')
+    streaming_split_eval.set_conf('conf', '%s/streaming_split_eval.yaml'%conf_root)
     task_list.append(streaming_split_eval)
 
     # feature extract
@@ -128,10 +118,10 @@ def run_plan():
     task_list.append(fe_eval)
 
     # shuffle training instance
-    streaming_shuffle_train = Task.create('xxxxxxxxxxxxxxxxxxxx', name='streaming_shuffle_train')
+    streaming_shuffle_train = Task.create('HadoopStreaming', name='streaming_shuffle_train')
     streaming_shuffle_train.upstream = [fe_train]
     streaming_shuffle_train.outputs = [output_shuffle_train]
-    streaming_shuffle_train.set_conf(xxxxxxxxxxxxxxxx, './conf/streaming_shuffle.yaml')
+    streaming_shuffle_train.set_conf('conf', '%s/streaming_shuffle.yaml'%conf_root)
     task_list.append(streaming_shuffle_train)
 
     # model train
@@ -142,10 +132,9 @@ def run_plan():
     task_list.append(model_train)
 
     # model eval
-    model_eval = Task.create('xxxxxxxxxxxxxxxx', name='model_evaluate')
+    model_eval = Task.create('ModelTesting', name='model_evaluate')
     model_eval.outputs([output_eval])
-    model_eval.set_conf(xxxxxxxxxxxxxxxxxxx, xxxxxxxxxxxxxxxxxxx)
-    model_eval.upstream([model_train, fe_eval])
+    model_eval.upstream([fe_eval, model_train])
     task_list.append(model_eval)
 
     plan = Plan.create('ctr_demo')
@@ -153,13 +142,33 @@ def run_plan():
     plan.run()
     print 'Plan ID=%s is running' % plan.id
     plan.wait()
-    print 'Plan finished, status=%s' % plan.status
+    print 'Plan ID=%s finished, status=%s' % (plan.id, plan.status)
+
 
 def resume_plan(plan_id):
-    plan = Plan.get_plan(plan_id)
+    plan = Plan.query(plan_id)
     plan.resume()
     plan.wait()
     print 'Plan finished, status=%s' % plan.status
+
+
+def run_single_task():
+    i_d = Data.query('output_data')
+    o_d = Data.create('output_model')
+
+    model_train = Task.create('ModelTraining')
+    model_train.inputs = [i_d]
+    model_train.outputs = [o_d]
+
+    # configure
+    model_train.set_conf('training_bits', 10)
+    model_train.run()
+
+
+def delete_data(name):
+    d = Data.delete(name)
+    print 'Data %s has been marked as delete, uri=%s' % (name, d.uri)
+
 
 if __name__ == '__main__':
     run_plan()

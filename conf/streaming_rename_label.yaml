@@ -1,6 +1,6 @@
-streaming_cli_args :
+streaming_task :
     file : /home/shiguangchuan/workspace/github/shiguangchuan/ctr_demo/script/streaming_rename_label.py
-    mapper : ./streaming_rename_label.py 23
+    mapper : "./streaming_rename_label.py 23"
     reducer : None
     defines :
         mapreduce.reduce.tasks : 0

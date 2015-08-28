@@ -1,4 +1,4 @@
-streaming_cli_args :
+streaming_task :
     file : /home/shiguangchuan/workspace/github/shiguangchuan/ctr_demo/script/streaming_shuffle_mapper.sh
     file : /home/shiguangchuan/workspace/github/shiguangchuan/ctr_demo/script/streaming_shuffle_reducer.sh
     mapper : ./streaming_shuffle_mapper.sh
