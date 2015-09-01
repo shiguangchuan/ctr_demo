@@ -1,5 +1,5 @@
 streaming_task :
-    files : ['/app/cli/script/streaming_time_norm.py']
+    files : ['#DEMO_ROOT#/script/streaming_time_norm.py']
     mapper : "./streaming_time_norm.py 1"
     reducer : None
     defines :

@@ -19,7 +19,7 @@ def run_plan():
     site_schema = ['site_id', 'site_category']
     
     input_root = './data'
-    conf_root = './conf'
+    conf_root = './working_conf'
 
     # import input table
     input_app = Data.create('ctr_demo_input_app', uri='file://%s/app'%input_root, schema=app_schema) if not Data.exists('ctr_demo_input_app') else Data.query('ctr_demo_input_app')
