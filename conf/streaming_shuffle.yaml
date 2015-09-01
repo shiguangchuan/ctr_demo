@@ -1,7 +1,6 @@
 streaming_task :
-    file : /tmp/ctr_demo/script/streaming_shuffle_mapper.sh
-    file : /tmp/ctr_demo/script/streaming_shuffle_reducer.sh
-    mapper : ./streaming_shuffle_mapper.sh
+    files : ['/tmp/ctr_demo/script/streaming_shuffle_mapper.py', '/tmp/ctr_demo/script/streaming_shuffle_reducer.sh']
+    mapper : ./streaming_shuffle_mapper.py
     reducer : ./streaming_shuffle_reducer.sh
     defines :
         mapred.reduce.tasks : 20
