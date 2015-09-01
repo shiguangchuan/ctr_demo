@@ -1,5 +1,5 @@
 streaming_task :
-    files : ['/tmp/ctr_demo/script/streaming_filter_by_time.py']
+    files : ['/app/cli/script/streaming_filter_by_time.py']
     mapper : "./streaming_filter_by_time.py 1 lt 392824"
     reducer : None
     defines :

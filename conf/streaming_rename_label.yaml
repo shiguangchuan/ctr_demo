@@ -1,5 +1,5 @@
 streaming_task :
-    files : ['/tmp/ctr_demo/script/streaming_rename_label.py']
+    files : ['/app/cli/script/streaming_rename_label.py']
     mapper : "./streaming_rename_label.py 23"
     reducer : None
     defines :

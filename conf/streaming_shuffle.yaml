@@ -1,5 +1,5 @@
 streaming_task :
-    files : ['/tmp/ctr_demo/script/streaming_shuffle_mapper.py', '/tmp/ctr_demo/script/streaming_shuffle_reducer.sh']
+    files : ['/app/cli/script/streaming_shuffle_mapper.py', '/app/cli/script/streaming_shuffle_reducer.sh']
     mapper : ./streaming_shuffle_mapper.py
     reducer : ./streaming_shuffle_reducer.sh
     defines :
