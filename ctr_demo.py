@@ -52,6 +52,7 @@ def run_plan():
     output_streaming_time_norm_label.schema = label_schema
     streaming_time_norm_label.outputs = [output_streaming_time_norm_label]
     streaming_time_norm_label.set_conf('conf', '%s/streaming_time_norm.yaml'%conf_root)
+    streaming_time_norm_label.solid()
     task_list.append(streaming_time_norm_label)
 
     streaming_time_norm_show = Task.create('HadoopStreaming', name='streaming_time_norm_show')
@@ -59,6 +60,7 @@ def run_plan():
     output_streaming_time_norm_show.schema = show_schema
     streaming_time_norm_show.outputs = [output_streaming_time_norm_show]
     streaming_time_norm_show.set_conf('conf', '%s/streaming_time_norm.yaml'%conf_root)
+    streaming_time_norm_show.solid()
     task_list.append(streaming_time_norm_show)
 
     # filter show data between 10.21 ~ 10.25
@@ -67,6 +69,7 @@ def run_plan():
     output_streaming_time_filter_show.schema = show_schema
     streaming_time_filter_show.outputs = [output_streaming_time_filter_show]
     streaming_time_filter_show.set_conf('conf', '%s/streaming_time_filter_show.yaml'%conf_root)
+    streaming_time_filter_show.solid()
     task_list.append(streaming_time_filter_show)
 
     # JOIN
@@ -74,18 +77,21 @@ def run_plan():
     join_show_app.upstream = [streaming_time_filter_show, Task.create(datas=[input_app])]
     join_show_app.outputs = [output_join_show_app]
     join_show_app.set_conf('conf', '%s/join_show_app.yaml'%conf_root)
+    join_show_app.solid()
     task_list.append(join_show_app)
 
     join_show_app_site = Task.create('TableJoint', name='join_show_app_site')
     join_show_app_site.upstream = [join_show_app, Task.create(datas=[input_site])]
     join_show_app_site.outputs = [output_join_show_app_site]
     join_show_app_site.set_conf('conf', '%s/join_show_app_site.yaml'%conf_root)
+    join_show_app_site.solid()
     task_list.append(join_show_app_site)
 
     join_show_app_site_label = Task.create('TableJoint', name='join_show_app_site_label')
     join_show_app_site_label.upstream = [join_show_app_site, streaming_time_norm_label]
     join_show_app_site_label.outputs = [output_join_show_app_site_label]
     join_show_app_site_label.set_conf('conf', '%s/join_show_app_site_label.yaml'%conf_root)
+    join_show_app_site_label.solid()
     task_list.append(join_show_app_site_label)
 
     # rename label, >0 => 1, =0 or empty => -1
@@ -94,6 +100,7 @@ def run_plan():
     output_streaming_rename_label.schema = join_show_app_site_label.outputs[0].schema
     streaming_rename_label.outputs = [output_streaming_rename_label]
     streaming_rename_label.set_conf('conf', '%s/streaming_rename_label.yaml'%conf_root)
+    streaming_rename_label.solid()
     task_list.append(streaming_rename_label)
 
     # split training & eval
@@ -102,6 +109,7 @@ def run_plan():
     output_streaming_split_train.schema = streaming_split_train.inputs[0].schema
     streaming_split_train.outputs = [output_streaming_split_train]
     streaming_split_train.set_conf('conf', '%s/streaming_split_train.yaml'%conf_root)
+    streaming_split_train.solid()
     task_list.append(streaming_split_train)
 
     streaming_split_eval = Task.create('HadoopStreaming', name='streaming_split_eval')
@@ -109,6 +117,7 @@ def run_plan():
     output_streaming_split_eval.schema = streaming_split_eval.inputs[0].schema
     streaming_split_eval.outputs = [output_streaming_split_eval]
     streaming_split_eval.set_conf('conf', '%s/streaming_split_eval.yaml'%conf_root)
+    streaming_split_eval.solid()
     task_list.append(streaming_split_eval)
 
     # feature extract
@@ -116,12 +125,14 @@ def run_plan():
     fe_train.set_conf('conf', '%s/feature_list.config'%conf_root)
     fe_train.upstream = [streaming_split_train]
     fe_train.outputs = [output_feature_extract_train]
+    fe_train.solid()
     task_list.append(fe_train)
 
     fe_eval = Task.create('FeatureExtraction', name='feture_extract_eval')
     fe_eval.set_conf('conf', '%s/feature_list.config'%conf_root)
     fe_eval.upstream = [streaming_split_eval]
     fe_eval.outputs = [output_feature_extract_eval]
+    fe_eval.solid()
     task_list.append(fe_eval)
 
     # shuffle training instance
@@ -129,6 +140,7 @@ def run_plan():
     streaming_shuffle_train.upstream = [fe_train]
     streaming_shuffle_train.outputs = [output_shuffle_train]
     streaming_shuffle_train.set_conf('conf', '%s/streaming_shuffle.yaml'%conf_root)
+    streaming_shuffle_train.solid()
     task_list.append(streaming_shuffle_train)
 
     # model train
@@ -136,12 +148,14 @@ def run_plan():
     model_train.outputs = [output_train]
     model_train.set_conf('training_bits', 10)
     model_train.upstream = [streaming_shuffle_train]
+    model_train.solid()
     task_list.append(model_train)
 
     # model eval
     model_eval = Task.create('ModelTesting', name='model_evaluate')
     model_eval.outputs = [output_eval]
     model_eval.upstream = [fe_eval, model_train]
+    model_eval.solid()
     task_list.append(model_eval)
 
     plan = Plan.create('ctr_demo')
