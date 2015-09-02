@@ -82,4 +82,4 @@ out_table:
             method : direct
 env :
     mapred.reduce.tasks : 10
-    mapreduce.reduce.memory.mb : 31000
+    mapreduce.reduce.memory.mb : 63000

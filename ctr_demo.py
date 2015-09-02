@@ -30,6 +30,7 @@ def run_plan():
     # define output table
     output_streaming_time_norm_label = Data.create('ctr_demo_streaming_time_norm_label') if not Data.exists('ctr_demo_streaming_time_norm_label') else Data.query('ctr_demo_streaming_time_norm_label')
     output_streaming_time_norm_show = Data.create('ctr_demo_streaming_time_norm_show') if not Data.exists('ctr_demo_streaming_time_norm_show') else Data.query('ctr_demo_streaming_time_norm_show')
+    output_streaming_time_filter_show = Data.create('ctr_demo_streaming_time_filter_show') if not Data.exists('ctr_demo_streaming_time_filter_show') else Data.query('ctr_demo_streaming_time_filter_show')
     output_join_show_app = Data.create('ctr_demo_join_show_app') if not Data.exists('ctr_demo_join_show_app') else Data.query('ctr_demo_join_show_app')
     output_join_show_app_site = Data.create('ctr_demo_join_show_app_site') if not Data.exists('ctr_demo_join_show_app_site') else Data.query('ctr_demo_join_show_app_site')
     output_join_show_app_site_label = Data.create('ctr_demo_join_show_app_site_label') if not Data.exists('ctr_demo_join_show_app_site_label') else Data.query('ctr_demo_join_show_app_site_label')
@@ -60,9 +61,17 @@ def run_plan():
     streaming_time_norm_show.set_conf('conf', '%s/streaming_time_norm.yaml'%conf_root)
     task_list.append(streaming_time_norm_show)
 
+    # filter show data between 10.21 ~ 10.25
+    streaming_time_filter_show = Task.create('HadoopStreaming', name='streaming_time_filter_show')
+    streaming_time_norm_show.upstream = [streaming_time_norm_show]
+    output_streaming_time_filter_show.schema = show_schema
+    streaming_time_filter_show.outputs = [output_streaming_time_filter_show]
+    streaming_time_filter_show.set_conf('conf', '%s/streaming_time_filter_show.yaml'%conf_root)
+    task_list.append(streaming_time_filter_show)
+
     # JOIN
     join_show_app = Task.create('TableJoint', name='join_show_app')
-    join_show_app.upstream = [streaming_time_norm_show, Task.create(datas=[input_app])]
+    join_show_app.upstream = [streaming_time_filter_show, Task.create(datas=[input_app])]
     join_show_app.outputs = [output_join_show_app]
     join_show_app.set_conf('conf', '%s/join_show_app.yaml'%conf_root)
     task_list.append(join_show_app)

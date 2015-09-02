@@ -1,0 +1,8 @@
+streaming_task :
+    files : ['#DEMO_ROOT#/script/streaming_filter_by_time.py']
+    mapper : "./streaming_filter_by_time.py 1 between 392728,392848"
+    reducer : None
+    defines :
+        mapred.reduce.tasks : 0
+        mapred.job.name : time_filter_show
+
