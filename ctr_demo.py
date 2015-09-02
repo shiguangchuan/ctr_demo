@@ -169,10 +169,13 @@ def run_plan():
 def resume_plan(plan_id):
     plan = Plan.query(plan_id)
     # reload config
+    some_task = plan.tasks[xxx]
     some_task.set_conf(xxx, xxx)
+    some_task.solid()
     plan.resume()
+    print 'Plan ID=%s is resuming' % plan.id
     plan.wait()
-    print 'Plan finished, status=%s' % plan.status
+    print 'Plan ID=%s finished, status=%s' % (plan.id, plan.status)
 
 
 def run_single_task():
