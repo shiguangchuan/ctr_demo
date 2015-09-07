@@ -63,7 +63,7 @@ def run_plan():
     streaming_time_norm_show.solid()
     task_list.append(streaming_time_norm_show)
 
-    # filter show data between 10.21 ~ 10.25
+    # filter show data between 10.21 ~ 10.30
     streaming_time_filter_show = Task.create('HadoopStreaming', name='streaming_time_filter_show')
     streaming_time_norm_show.upstream = [streaming_time_norm_show]
     output_streaming_time_filter_show.schema = show_schema
@@ -103,7 +103,7 @@ def run_plan():
     streaming_rename_label.solid()
     task_list.append(streaming_rename_label)
 
-    # split training & eval
+    # split training & eval, < 10.29 train, >=10.29 eval
     streaming_split_train = Task.create('HadoopStreaming', name='streaming_split_train')
     streaming_split_train.upstream = [streaming_rename_label]
     output_streaming_split_train.schema = streaming_split_train.inputs[0].schema
@@ -146,7 +146,7 @@ def run_plan():
     # model train
     model_train = Task.create('ModelTraining', name='model_train')
     model_train.outputs = [output_train]
-    model_train.set_conf('training_bits', 10)
+    model_train.set_conf('training_bits', 16)
     model_train.upstream = [streaming_shuffle_train]
     model_train.solid()
     task_list.append(model_train)

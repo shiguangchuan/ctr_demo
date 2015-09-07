@@ -1,6 +1,6 @@
 streaming_task :
     files : ['#DEMO_ROOT#/script/streaming_filter_by_time.py']
-    mapper : "./streaming_filter_by_time.py 1 ge 392824"
+    mapper : "./streaming_filter_by_time.py 1 ge 392920"
     reducer : None
     defines :
         mapred.reduce.tasks : 0
