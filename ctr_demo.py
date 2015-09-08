@@ -65,7 +65,7 @@ def run_plan():
 
     # filter show data between 10.21 ~ 10.30
     streaming_time_filter_show = Task.create('HadoopStreaming', name='streaming_time_filter_show')
-    streaming_time_norm_show.upstream = [streaming_time_norm_show]
+    streaming_time_filter_show.upstream = [streaming_time_norm_show]
     output_streaming_time_filter_show.schema = show_schema
     streaming_time_filter_show.outputs = [output_streaming_time_filter_show]
     streaming_time_filter_show.set_conf('conf', '%s/streaming_time_filter_show.yaml'%conf_root)
