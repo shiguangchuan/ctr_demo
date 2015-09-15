@@ -146,7 +146,7 @@ def run_plan():
     # model train
     model_train = Task.create('ModelTraining', name='model_train')
     model_train.outputs = [output_train]
-    model_train.set_conf('training_bits', 16)
+    model_train.set_conf('training_bits', 29)
     model_train.upstream = [streaming_shuffle_train]
     model_train.solid()
     task_list.append(model_train)
