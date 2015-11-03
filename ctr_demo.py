@@ -144,15 +144,15 @@ def run_plan():
     task_list.append(streaming_shuffle_train)
 
     # model train
-    model_train = Task.create('ModelTraining', name='model_train')
+    model_train = Task.create('PicoTraining', name='model_train')
     model_train.outputs = [output_train]
-    model_train.set_conf('training_bits', 29)
+    model_train.set_conf('feature_creation_ratio', 0.9)
     model_train.upstream = [streaming_shuffle_train]
     model_train.solid()
     task_list.append(model_train)
 
     # model eval
-    model_eval = Task.create('ModelTesting', name='model_evaluate')
+    model_eval = Task.create('PicoTesting', name='model_evaluate')
     model_eval.outputs = [output_eval]
     model_eval.upstream = [fe_eval, model_train]
     model_eval.solid()
@@ -182,12 +182,12 @@ def run_single_task():
     i_d = Data.query('output_data')
     o_d = Data.create('output_model')
 
-    model_train = Task.create('ModelTraining')
+    model_train = Task.create('PicoTraining')
     model_train.inputs = [i_d]
     model_train.outputs = [o_d]
 
     # configure
-    model_train.set_conf('training_bits', 10)
+    model_train.set_conf('feature_creation_ratio', 1.0)
     model_train.run()
 
 
